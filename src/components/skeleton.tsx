@@ -1,5 +1,5 @@
-"use client" ;
-import { createContext, DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_MEDIA_SRC_TYPES, Suspense, useState } from "react";
+"use client";
+import { createContext, useState } from "react";
 import TopButtons from "./top-buttons";
 import Game from "./game";
 import { colors, WHITE } from "@/lib/constants";
@@ -59,11 +59,8 @@ export default function Skeleton() {
     return (
         <GameContext value={obj}>
             <TopButtons />
-            <Suspense fallback={<h1>This may take long!</h1>}>
-<Game />
-            </Suspense>
+            <Game />
             <Modal />
-
         </GameContext>
     );
 }

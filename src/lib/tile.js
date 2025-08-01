@@ -7,6 +7,7 @@ function shuffle(arr) {
         (arr[i] = arr[num]), (arr[num] = temp);
     }
 }
+
 class Board {
     constructor(cols, rows) {
         (this.cols = cols), (this.rows = rows), this.makeAndFilterGrids();

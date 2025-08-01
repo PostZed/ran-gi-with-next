@@ -5,10 +5,13 @@ import { RangiGame } from '@/game/scene';
 import {
     Bars4Icon
 } from '@heroicons/react/24/outline';
+import { useContext } from 'react';
+import { GameContext } from './skeleton';
 
 const url = process.env.NEXT_PUBLIC_URL;
 
 export default function TopButtons() {
+    const {setVisible,setModalName} = useContext(GameContext) ;
     async function fetchBoard() {
         try {
             const res = await fetch(`${url}/9/board`);
@@ -35,7 +38,8 @@ export default function TopButtons() {
                  hover:bg-pink-500 flex-1 text-center'>How to play</button>
             </div>
             <button onClick={e => {
-                fetchBoard();
+                setVisible(true);
+                setModalName("menu") ;
             }}>
                 <Bars4Icon className='w-5 hover:border-1' />
             </button>
@@ -47,7 +51,7 @@ export default function TopButtons() {
 function ColorBar() {
     return (<div className='flex flex-1 h-6 pt-1 pb-1'>
         {Array.from({ length: 4 }).map(i => {
-            return <div className='h-full aspect-square bg-[rgb(0,0,0)] mx-1'>
+            return <div className='h-full aspect-square bg-[rgb(255,0,0)] mx-1'>
 
             </div>
         })}

@@ -1,6 +1,6 @@
 "use client";
 
-import { BOTH, EMPTY, NUM_ONLY, SQ_ONLY, WHITE } from "@/lib/constants";
+import { BOTH, colors, EMPTY, NUM_ONLY, SQ_ONLY, WHITE } from "@/lib/constants";
 import { GameObjects, Scene } from "phaser";
 
 export type Info = {
@@ -18,12 +18,63 @@ export class Board {
     static dims = 10;
     static list: Tile[] = [];
     static canvasWidth: number;
+    static palette: number[] ;
 
+    static changePayloadColors(info: Info[]) {
+        const savedPalette = this.palette.slice(1) ;
+        const isDifferent = this.paletteIsDifferent(colors, savedPalette);
+        if (!isDifferent)
+            return;
 
-    static createBoard(/*dims: number, info: Info[], width: number*/) {
+        for (let i = 0; i < info.length; i++) {
+            const item = info[i];
+            const colorIndex = colors.findIndex(c => c === item.color);
+            item.color = savedPalette[colorIndex];
+        }
+    
+    }
+
+    static paletteIsDifferent(nuPalette: number[], currentPalette: number[]) {
+        nuPalette = Array.from(nuPalette);
+        currentPalette = Array.from(currentPalette);
+        let count = 0;
+        for (let i = 0; i < 4; i++) {
+            const color = nuPalette[i];
+            const present = currentPalette.findIndex(item => item === color);
+            if (present > -1) {
+                currentPalette.splice(present, present + 1);
+                count++;
+            }
+        }
+
+        if (count === 4)
+            return false;
+        return true;
+    }
+
+    static changePalette(colorList: number[]) {
+        if (!this.paletteIsDifferent(colorList, this.palette))
+            return;
+        const currentPalette = this.palette.slice(1);
+        for (let i = 0; i < this.list.length; i++) {
+            const tile = this.list[i];
+            if (tile.fillColor !== WHITE) {
+                const colorIndex = currentPalette.findIndex(c => c === tile.myColor);
+                tile.myColor = colorList[colorIndex]
+                const currentColor = currentPalette.findIndex(c => c === tile.fillColor);
+                tile.fillColor = colorList[colorIndex] ;
+            }
+
+        }
+        console.log(colorList)
+        this.palette = [WHITE, ...colorList];
+    }
+
+    static createBoard() {
+        this.changePayloadColors(this.info);
         const dims = this.dims;
-        const info = this.info ;
-        const width = this.canvasWidth / dims ;
+        const info = this.info;
+        const width = this.canvasWidth / dims;
         this.destroyBoard();
         Tile.size = width;
         info.forEach((item) => {
@@ -45,7 +96,7 @@ export class Board {
 export class Tile extends GameObjects.Rectangle {
     static scene: Scene;
     static size: number
-    static palette: number[]
+
     col: number
     row: number
     dot: GameObjects.Arc
@@ -63,7 +114,8 @@ export class Tile extends GameObjects.Rectangle {
         this.col = col;
         this.row = row;
         this.hint = hint;
-        //   this.setInteractive(true)
+        if(hint === EMPTY || hint === NUM_ONLY) 
+        this.setInteractive(true)
         if (hint === NUM_ONLY || hint === BOTH)
             this.myNum = num;
         this.setHints(hint);
@@ -97,10 +149,10 @@ export class Tile extends GameObjects.Rectangle {
             this.palettePos++;
 
         else if (this.palettePos !== 0 && this.palettePos % 4 === 0)
-            this.fillColor = Tile.palette[0];
+            this.fillColor = Board.palette[0];
 
         else
-            this.fillColor = Tile.palette[++this.palettePos];
+            this.fillColor = Board.palette[++this.palettePos];
     }
 
     destroySelf() {

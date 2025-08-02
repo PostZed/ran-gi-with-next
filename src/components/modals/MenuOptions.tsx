@@ -10,7 +10,7 @@ type OptionsType = {
 }
 
 const optionsMap: OptionsType[] = [
-    { title: "Change palette", componentKey: "menu" },
+    { title: "Change palette", componentKey: "palette" },
     { title: "Change board dimensions", componentKey: "" },
     { title: "Get game link", componentKey: "" }
 ]

@@ -38,8 +38,9 @@ export default function TopButtons() {
                  hover:bg-pink-500 flex-1 text-center'>How to play</button>
             </div>
             <button onClick={e => {
-                setVisible(true);
-                setModalName("menu") ;
+                // setVisible(true);
+                // setModalName("menu") ;
+                fetchBoard() ;
             }}>
                 <Bars4Icon className='w-5 hover:border-1' />
             </button>

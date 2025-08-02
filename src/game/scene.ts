@@ -30,5 +30,9 @@ export const config :Types.Core.GameConfig = {
     scene: RangiGame,
     type: CANVAS,
     backgroundColor: 0xffffff,
-    input: true,
+    input: {
+        mouse : true,
+        touch : true,
+        keyboard : true
+    },
 };

@@ -18,20 +18,24 @@ export class Board {
     static dims = 10;
     static list: Tile[] = [];
     static canvasWidth: number;
-    static palette: number[] ;
+    static palette: number[];
 
-    static changePayloadColors(info: Info[]) {
+    static changePayloadColors(payload: Info[]) {
+        let info = JSON.stringify(payload);
+        info = JSON.parse(info) ;
         const savedPalette = this.palette.slice(1) ;
         const isDifferent = this.paletteIsDifferent(colors, savedPalette);
+        console.log(colors)
         if (!isDifferent)
-            return;
+            return info;
 
         for (let i = 0; i < info.length; i++) {
             const item = info[i];
             const colorIndex = colors.findIndex(c => c === item.color);
             item.color = savedPalette[colorIndex];
         }
-    
+        return info;
+
     }
 
     static paletteIsDifferent(nuPalette: number[], currentPalette: number[]) {
@@ -62,7 +66,7 @@ export class Board {
                 const colorIndex = currentPalette.findIndex(c => c === tile.myColor);
                 tile.myColor = colorList[colorIndex]
                 const currentColor = currentPalette.findIndex(c => c === tile.fillColor);
-                tile.fillColor = colorList[colorIndex] ;
+                tile.fillColor = colorList[colorIndex];
             }
 
         }
@@ -71,14 +75,14 @@ export class Board {
     }
 
     static createBoard() {
-        this.changePayloadColors(this.info);
+        
         const dims = this.dims;
-        const info = this.info;
+        const info = this.changePayloadColors(this.info);
         const width = this.canvasWidth / dims;
         this.destroyBoard();
         Tile.size = width;
         info.forEach((item) => {
-            const { isClueSquare, col, row, hint, color, count } = item
+            let { isClueSquare, col, row, hint, color, count } = item
             const tile = new Tile(col, row, color, hint, count);
             this.list.push(tile);
         });
@@ -114,8 +118,10 @@ export class Tile extends GameObjects.Rectangle {
         this.col = col;
         this.row = row;
         this.hint = hint;
-        if(hint === EMPTY || hint === NUM_ONLY) 
-        this.setInteractive(true)
+        if (hint === EMPTY || hint === NUM_ONLY){
+        this.setInteractive();
+        this.on("pointerdown", ()=>console.log(this))
+        }
         if (hint === NUM_ONLY || hint === BOTH)
             this.myNum = num;
         this.setHints(hint);
@@ -134,7 +140,7 @@ export class Tile extends GameObjects.Rectangle {
         }
 
         if (hint === BOTH || hint === NUM_ONLY) {
-            this.numHint = Tile.scene.add.text(this.x + Tile.size / 2, this.y + Tile.size / 2, this.myNum + "", {
+            this.numHint = Tile.scene.add.text(this.x + Tile.size / 2, this.y + Tile.size / 2, 9 + "", {
                 color: "#000000", fontSize: `${0.7 * Tile.size}px`
             }).setOrigin(0.5);
         }

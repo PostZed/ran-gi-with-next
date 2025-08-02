@@ -1,11 +1,12 @@
 "use client";
-import { createContext, useState } from "react";
+import { createContext, Suspense, useState } from "react";
 import TopButtons from "./top-buttons";
 import Game from "./game";
 import { colors, WHITE } from "@/lib/constants";
 import Palette from "./modals/ChangePalette";
 import { Board } from "@/game/board";
 import MenuButtons from "./modals/MenuOptions";
+import { ErrorBoundary } from "react-error-boundary";
 
 
 export type GameContextType = {
@@ -37,7 +38,7 @@ const modalMap = {
 }
 
 function Empty() {
-    return <></>
+    return <span hidden></span>
 }
 
 export default function Skeleton() {
@@ -59,8 +60,12 @@ export default function Skeleton() {
     return (
         <GameContext value={obj}>
             <TopButtons />
-            <Game />
-            <Modal />
+            {/* <ErrorBoundary fallback={<h2>Could not fetch game data.</h2>}>
+                <Suspense fallback={<h1>Loading game...</h1>}> */}
+                 <Game />
+                {/* </Suspense>
+             </ErrorBoundary> */}
+             <Modal />
         </GameContext>
     );
 }

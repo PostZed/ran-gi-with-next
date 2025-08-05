@@ -22,8 +22,8 @@ export class Board {
 
     static changePayloadColors(payload: Info[]) {
         let info = JSON.stringify(payload);
-        info = JSON.parse(info) ;
-        const savedPalette = this.palette.slice(1) ;
+        info = JSON.parse(info);
+        const savedPalette = this.palette.slice(1);
         const isDifferent = this.paletteIsDifferent(colors, savedPalette);
         console.log(colors)
         if (!isDifferent)
@@ -75,7 +75,7 @@ export class Board {
     }
 
     static createBoard() {
-        
+
         const dims = this.dims;
         const info = this.changePayloadColors(this.info);
         const width = this.canvasWidth / dims;
@@ -118,9 +118,9 @@ export class Tile extends GameObjects.Rectangle {
         this.col = col;
         this.row = row;
         this.hint = hint;
-        if (hint === EMPTY || hint === NUM_ONLY){
-        this.setInteractive();
-        this.on("pointerdown", ()=>console.log(this))
+        if (hint === EMPTY || hint === NUM_ONLY) {
+            this.setInteractive();
+            this.on("pointerdown", () => console.log(this))
         }
         if (hint === NUM_ONLY || hint === BOTH)
             this.myNum = num;
@@ -140,7 +140,7 @@ export class Tile extends GameObjects.Rectangle {
         }
 
         if (hint === BOTH || hint === NUM_ONLY) {
-            this.numHint = Tile.scene.add.text(this.x + Tile.size / 2, this.y + Tile.size / 2, 9 + "", {
+            this.numHint = Tile.scene.add.text(this.x + Tile.size / 2, this.y + Tile.size / 2, this.myNum + "", {
                 color: "#000000", fontSize: `${0.7 * Tile.size}px`
             }).setOrigin(0.5);
         }

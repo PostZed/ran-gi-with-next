@@ -1,4 +1,4 @@
-'use client' ;
+'use client';
 
 export default function Error({
   error,
@@ -6,18 +6,18 @@ export default function Error({
 }: {
   error: Error & { digest?: string }
   reset: () => void
-}){
+}) {
 
 
-    return (<div className="w-full md:w-1/3 bg-blue-200 rounded-lg mx-auto
+  return (<div className="w-full bg-white rounded-lg
     border-black border-4 shadow-md">
-        <h2>Something went wrong.</h2>
-        <p>Check your network connection<b/>
-        and try again.</p>
-        <button className="appearance-none" onClick={
-            e=>reset()
-        }>
-            Reload
-        </button>
-    </div>)
+    <h2>Something went wrong.</h2>
+    <p>Check your network connection and try again.</p>
+    <button className="transition duration-300 ease-in-out pl-2 pr-2 border border-black-[1px] rounded-full bg-pink-300
+                 hover:bg-pink-500 mx-auto" onClick={
+        e => reset()
+      }>
+      Reload
+    </button>
+  </div>)
 }

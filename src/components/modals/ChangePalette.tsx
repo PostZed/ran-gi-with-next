@@ -2,6 +2,7 @@ import { Board } from "@/game/board";
 import clsx from "clsx";
 import { useCallback, useContext, useState } from "react";
 import { GameContext, GameContextType } from "../skeleton";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const colorNames = ['yellow', 'green', 'red', 'blue', 'pink', 'purple', 'teal', 'gray'
     , 'maroon', 'blue-violet', 'brown', 'light green', 'chocolate', 'light blue',
@@ -14,6 +15,12 @@ const colorNumbers = ['#ffff00', '#ff00', '#ff0000', '#ff', '#ff00ff', '#800080'
 function strToNum(str: string): number {
     str = str.substring(1);
     return Number('0x' + str);
+}
+
+function decimalToHexString(num: number) {
+    let hex = Number(num).toString(16);
+    hex = "#" + hex.padStart(6, "0");
+    return hex;
 }
 
 function findSelected(currentColors: number[]) {
@@ -40,13 +47,23 @@ export default function Palette(
     //     setModalName
     // }: GameContextType
 ) {
-    const { setVisible, setModalName, colors } = useContext(GameContext);
+    const { setVisible,  colors, colorBarParent, disableBtns } = useContext(GameContext);
 
     const [selectedColors, setSelectedColors] = useState(() => findSelected(colors));
     const [selectedCount, setSelectedCount] = useState(4)
 
-    return (<div className="flex flex-col bg-white border absolute left-0 top-0 z-10 w-7/10 max-h-full">
-        <h2>Choose a different palette</h2>
+    return (<div className="flex flex-col bg-white border absolute left-0 top-0 z-10 max-w-7/10 max-h-[70%]">
+        <div className="flex justify-between border border-gray-300">
+            <h2 className="">Choose a different palette</h2>
+            <button className="appearance-none hover:border-1" onClick={() => {
+                Board.canRespond =true;
+                setVisible(false);
+                disableBtns(false) ;
+            }
+            }>
+                <XMarkIcon className="w-7" />
+            </button>
+        </div>
         <div className="overflow-x-auto overflow-y-auto">
             {colorNames.map((colorName, i) => (
                 <ColorOption hexCode={colorNumbers[i]}
@@ -60,7 +77,7 @@ export default function Palette(
                 />
             ))}
         </div>
-        <button className="transition duration-300 linear hover:bg-pink-500 rounded-full w-6/10 mx-auto bg-pink-300 p-2 disabled:bg-gray-300"
+        <button className="w-6/10 mx-auto px-2 btn"
             disabled={selectedCount < 4} onClick={() => {
                 const nuColors: number[] = [];
                 selectedColors.forEach((bool, i) => {
@@ -73,7 +90,13 @@ export default function Palette(
                 const json = JSON.stringify(nuColors);
                 localStorage.setItem('colors', json);
                 Board.changePalette(nuColors);
+                const colorHints = Array.from(colorBarParent.current.querySelectorAll("div"));
+                colorHints.forEach((lilDiv, i) => {
+                    lilDiv.style.backgroundColor = decimalToHexString(nuColors[i]);
+                })
+                Board.canRespond = true;
                 setVisible(false);
+                disableBtns(false)
             }}>
             Save
         </button>
@@ -126,7 +149,7 @@ function ColorOption(props: ColorOptionProps) {
                     });
                 }
             }} />
-        <div className="h-9/10 aspect-square mx-1" style={{
+        <div className="h-9/10 aspect-square rounded-xl mx-1" style={{
             backgroundColor: colorClassName
         }}></div>
         <h5>{props.colorName}</h5>

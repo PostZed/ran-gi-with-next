@@ -19,11 +19,13 @@ export class Board {
     static list: Tile[] = [];
     static canvasWidth: number;
     static palette: number[];
+    static canRespond = true;
+    static newGameCount = 0;
 
     static changePayloadColors(payload: Info[]) {
         let info = JSON.stringify(payload);
         info = JSON.parse(info);
-        const savedPalette = this.palette.slice(1);
+        const savedPalette = this.palette.slice(0, 4);
         const isDifferent = this.paletteIsDifferent(colors, savedPalette);
         console.log(colors)
         if (!isDifferent)
@@ -36,6 +38,13 @@ export class Board {
         }
         return info;
 
+    }
+
+    static isCorrect() {
+        const isCorrect = this.list.every(item => {
+            return item.fillColor === item.myColor;
+        });
+        return isCorrect;
     }
 
     static paletteIsDifferent(nuPalette: number[], currentPalette: number[]) {
@@ -59,7 +68,7 @@ export class Board {
     static changePalette(colorList: number[]) {
         if (!this.paletteIsDifferent(colorList, this.palette))
             return;
-        const currentPalette = this.palette.slice(1);
+        const currentPalette = this.palette.slice(0, 4);
         for (let i = 0; i < this.list.length; i++) {
             const tile = this.list[i];
             if (tile.fillColor !== WHITE) {
@@ -70,12 +79,20 @@ export class Board {
             }
 
         }
-        console.log(colorList)
-        this.palette = [WHITE, ...colorList];
+        //console.log(colorList)
+        this.palette = [...colorList, WHITE];
+    }
+
+    static startAgain() {
+        this.list.forEach((tile) => {
+            if (tile.hint === EMPTY || tile.hint === NUM_ONLY)
+                tile.fillColor = WHITE;
+        });
+        Board.canRespond = true;
     }
 
     static createBoard() {
-
+        this.canRespond = true;
         const dims = this.dims;
         const info = this.changePayloadColors(this.info);
         const width = this.canvasWidth / dims;
@@ -86,6 +103,8 @@ export class Board {
             const tile = new Tile(col, row, color, hint, count);
             this.list.push(tile);
         });
+
+
     }
 
     static destroyBoard() {
@@ -104,7 +123,7 @@ export class Tile extends GameObjects.Rectangle {
     col: number
     row: number
     dot: GameObjects.Arc
-    numHint: GameObjects.Text
+    numHint: GameObjects.DOMElement;
     myNum: number;
     myColor: number
     palettePos = 0;
@@ -118,10 +137,15 @@ export class Tile extends GameObjects.Rectangle {
         this.col = col;
         this.row = row;
         this.hint = hint;
-        if (hint === EMPTY || hint === NUM_ONLY) {
-            this.setInteractive();
-            this.on("pointerdown", () => console.log(this))
-        }
+        // if (hint === EMPTY || hint === NUM_ONLY) {
+        this.setInteractive();
+        this.on("pointerdown", () => {
+            console.log(this);
+            if (this.hint === BOTH || this.hint === SQ_ONLY || Board.canRespond === false)
+                return;
+            this.changeColor();
+        })
+        //  }
         if (hint === NUM_ONLY || hint === BOTH)
             this.myNum = num;
         this.setHints(hint);
@@ -134,31 +158,40 @@ export class Tile extends GameObjects.Rectangle {
         if (hint === EMPTY)
             return;
 
+
         if (hint === SQ_ONLY || hint === BOTH) {
             this.dot = Tile.scene.add.circle(offsetX, offsetY, 0.05 * this.width, 0x000000);
             this.fillColor = this.myColor;
         }
 
+
         if (hint === BOTH || hint === NUM_ONLY) {
-            this.numHint = Tile.scene.add.text(this.x + Tile.size / 2, this.y + Tile.size / 2, this.myNum + "", {
-                color: "#000000", fontSize: `${0.7 * Tile.size}px`
-            }).setOrigin(0.5);
+            // this.numHint = Tile.scene.add.text(this.x + Tile.size / 2, this.y + Tile.size / 2, "", {
+            //     color: "#000000", fontSize: `${0.7 * Tile.size}px`
+            // }).setOrigin(0.5);
+
+            const estilo = `color:transparent;
+            background-clip:text;
+            background-color:black;
+            font-size: ${0.7 * Tile.size}px;
+            font-family:var(--font-geist-mono)`
+            this.numHint = Tile.scene.add.dom(this.x + Tile.size / 2, this.y + Tile.size / 2, "div", estilo, "" + this.myNum)
+            
         }
     }
 
-    handleClick() {
-        this.changeColor();
-    }
 
     changeColor() {
-        if (this.palettePos === 0)
+        if (this.palettePos >= 0 && this.palettePos <= 3) {
+
+            this.fillColor = Board.palette[this.palettePos]
             this.palettePos++;
+        }
+        else {
+            this.fillColor = Board.palette[4];
+            this.palettePos = 0;
+        }
 
-        else if (this.palettePos !== 0 && this.palettePos % 4 === 0)
-            this.fillColor = Board.palette[0];
-
-        else
-            this.fillColor = Board.palette[++this.palettePos];
     }
 
     destroySelf() {

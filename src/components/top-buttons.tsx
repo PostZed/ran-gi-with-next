@@ -7,41 +7,25 @@ import {
 } from '@heroicons/react/24/outline';
 import { useContext } from 'react';
 import { GameContext } from './skeleton';
-import { propagateServerField } from 'next/dist/server/lib/render-server';
+import { fetchGame } from '@/utils/fetchGame';
 
 const url = process.env.NEXT_PUBLIC_URL;
 
-export default function TopButtons() {
-    const { setVisible, setModalName } = useContext(GameContext);
-    async function fetchBoard() {
-        try {
-            const res = await fetch(`${url}/9/board`);
-            if (res.ok) {
-                const info = (await res.json()).info;
-                Board.dims = 9;
-                Board.info = info;
-                Board.createBoard(/*9, info, Board.canvasWidth / 9*/);
-            }
-            else throw new Error("Game data not fetched");
-        } catch (error) {
-            console.log(error)
-            throw new Error("Game data not fetched");
-        }
-    }
+export default function TopButtons({ref}) {
+    const { setVisible, setModalName, disableBtns, btnsDisabled } = useContext(GameContext);
 
-
-
+  
     return (
         <div className="flex justify-between box-border h-8 pt-1 pb-1 align-items">
-            <ColorBar />
+            <ColorBar ref={ref}/>
             <div className="flex-1">
-                <button className='h-full transition duration-300 ease-in-out pl-2 pr-2 border border-black-[1px] rounded-full bg-pink-300
-                 hover:bg-pink-500 flex-1 text-center'>How to play</button>
+                <button className='btn h-full pl-2 rounded-full pr-2 flex-1 text-center' disabled={btnsDisabled}>How to play</button>
             </div>
-            <button onClick={e => {
-                // setVisible(true);
-                // setModalName("menu") ;
-                fetchBoard();
+            <button disabled={btnsDisabled} onClick={() => {
+                Board.canRespond = false ;
+                setVisible(true);
+                setModalName("menu");
+                disableBtns(true) ;
             }}>
                 <Bars4Icon className='w-5 hover:border-1' />
             </button>
@@ -50,13 +34,13 @@ export default function TopButtons() {
     );
 }
 
-function ColorBar() {
+function ColorBar({ref}) {
     const { colors } = useContext(GameContext);
-    return (<div className='flex flex-1 h-6 pt-1 pb-1'>
+    return (<div className='flex flex-1 h-6 pt-1 pb-1' ref={ref}>
         {Array.from({ length: 4 }).map((_, i) => {
             const inHex = Number(colors[i]).toString(16);
 
-            return <div className='h-full aspect-square mx-1' style={{
+            return <div key={inHex} className='h-full aspect-square mx-1' style={{
                 backgroundColor: "#" + inHex.padStart(6, "0")
             }}>
 

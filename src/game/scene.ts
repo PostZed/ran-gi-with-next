@@ -1,6 +1,6 @@
 "use client";
 
-import { Scene ,Types, CANVAS } from "phaser";
+import { Scene, Types, CANVAS } from "phaser";
 import { Board, Info, Tile } from "./board";
 
 export class RangiGame extends Scene {
@@ -17,22 +17,22 @@ export class RangiGame extends Scene {
         Board.scene = this;
         Tile.scene = this;
         this.makeNewBoard();
+
     }
 
     makeNewBoard() {
-       // const tileSize = Board.canvasWidth / Board.dims;
+        // const tileSize = Board.canvasWidth / Board.dims;
         Board.createBoard(/*RangiGame.size, RangiGame.info, tileSize*/);
     }
 }
 
-export const config :Types.Core.GameConfig = {
+export const config: Types.Core.GameConfig = {
     parent: 'game',
     scene: RangiGame,
     type: CANVAS,
     backgroundColor: 0xffffff,
-    input: {
-        mouse : true,
-        touch : true,
-        keyboard : true
-    },
+    input: true,
+    dom: {
+        createContainer: true
+    }
 };

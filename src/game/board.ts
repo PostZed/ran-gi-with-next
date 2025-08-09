@@ -3,6 +3,7 @@
 import { BOTH, colors, EMPTY, NUM_ONLY, SQ_ONLY, WHITE } from "@/lib/constants";
 import { GameObjects, Scene } from "phaser";
 
+
 export type Info = {
     isClueSquare: boolean,
     col: number,

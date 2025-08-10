@@ -15,7 +15,7 @@ export type Info = {
 
 export class Board {
     static info: any[];
-    static scene: Scene;
+    static scene: Phaser.Scene;
     static dims = 10;
     static list: Tile[] = [];
     static canvasWidth: number;

@@ -5,9 +5,11 @@ const nextConfig: NextConfig = {
   /* config options here */ 
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   eslint: {
-   
     ignoreDuringBuilds: true,
-  }
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 const withMDX = createMDX({

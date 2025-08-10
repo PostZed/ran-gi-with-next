@@ -20,7 +20,9 @@ const options = {
 
 const fetcher = async (url: string) => {
 
-    const res = await fetch(url);
+    const res = await fetch(url, {
+       mode:"cors"
+    });
     if (res.ok) {
         const info = (await res.json()).info;
         return info;
@@ -32,6 +34,7 @@ export default function Game() {
     const { dimensions, colors, isModalShowing, disableBtns, gameCount } = useContext(GameContext);
     const { data, error, isLoading } = useSWR(
         `http://localhost:3000/${dimensions}/board`,
+        // 'http://192.168.0.158:3000/10/board',
         fetcher, options
     )
 

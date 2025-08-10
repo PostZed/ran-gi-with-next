@@ -99,12 +99,11 @@ export default function Skeleton() {
             <TopButtons ref={colorBarRef} />
            
            <BlurWrapper blur={isModalShowing}>
-                <Game key={`${gameCount}`}/>
+                <Game key={`${gameCount}`} />
             </BlurWrapper>
          
             {isModalShowing && <Modal />}
             <ButtonBar />
-            <span>{gameCount}</span>
         </GameContext>
     );
 }

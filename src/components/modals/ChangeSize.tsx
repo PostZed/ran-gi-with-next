@@ -5,7 +5,7 @@ import { Board } from "@/game/board";
 
 
 export default function ChangeSize() {
-    const { disableBtns, dimensions, setVisible, setDimensions} = useContext(GameContext);
+    const { disableBtns, dimensions, setVisible, setDimensions , setGameCount} = useContext(GameContext);
     const [selectedDimension, setSelectedDimension] = useState(dimensions)
     return (
         <div className="md:w-7/10 flex flex-col absolute bg-white rounded-md border">
@@ -37,11 +37,15 @@ export default function ChangeSize() {
                 }
             </ul>
 
-            <button className="h-7 w-7/10 mx-auto pl-2 pr-2 btn" disabled={dimensions === selectedDimension}
+            <button className="flex-none w-7/10 mx-auto pl-2 pr-2 btn" disabled={dimensions === selectedDimension}
           onClick={()=>{
             disableBtns(false) ;
             setVisible(false) ;
-            setDimensions(selectedDimension)
+            setDimensions(selectedDimension);
+            setGameCount((count) => {
+                return count + 1 ;
+            })
+            localStorage.setItem("dimensions" , ""+selectedDimension) ;
           }}>Save</button>
         </div>
     )

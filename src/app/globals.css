@@ -84,6 +84,34 @@
       scale: 0.98;
     }
   }
+
+  --animate-slide-in-plus:slide-in 200ms linear forwards;
+
+  @keyframes slide-in {
+    0% {
+      position: relative;
+      left: -100%;
+    }
+
+    100% {
+      position: relative;
+      left: 0;
+    }
+  }
+
+  --animate-slide-in-minus:slide-in2 200ms linear forwards;
+
+  @keyframes slide-in2 {
+    0% {
+      position: relative;
+      right: -100%;
+    }
+
+    100% {
+      position: relative;
+      right: 0;
+    }
+  }
 }
 
 @layer components {
@@ -92,43 +120,56 @@
     border-radius: calc(infinity * 1px);
     text-align: center;
     vertical-align: middle;
-    height:calc(6rem * 0.25);
+    height: calc(9rem * 0.25);
 
-    &:hover{
+    @media(min-width:768px) {
+      height: calc(6rem * 0.25);
+    }
+
+    &:hover {
       background-color: var(--color-pink-500);
     }
-    &:disabled{
+
+    &:disabled {
       background-color: var(--color-gray-300);
     }
+
   }
 
-  .confirmBtn{
-    background-color: rgb(247, 243, 243) ;
+  .confirmBtn {
+    background-color: rgb(247, 243, 243);
     text-align: center;
-    height : calc(6 * 0.25rem);
-    flex : 1;
-    border-radius:5px;
-     &:hover{
-      background-color: rgb(201, 199, 199)
-     }
-  }
-
-  .alerts{
-    /* w-9.5/10 mx-auto absolute top-1/5 */
-    width:70%;
-    left:15%;
-    position:absolute;
-    min-height:20%;
-    max-height: 70%;
-    top:20%;
-    border: 1px black solid ;
+    height: calc(9 * 0.25rem);
+    flex: 1;
+    border: 1px black solid;
+    border-radius: 5px;
+    font-size: medium;
+    @media(min-width:768px) {
+      height: calc(6rem * 0.25);
       
-}
-  .instructions{
-      p{
-      margin-bottom: 5px;
+    }
+
+    &:hover {
+      background-color: rgb(201, 199, 199)
     }
   }
+
+  .alerts {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 70%;
+    left: 15%;
+    position: absolute;
+    height: 50%;
+    min-height: 20%;
+    max-height: 70%;
+    top: 20%;
+    border: 1px black solid;
+
+  }
+
 
 }
 
@@ -264,15 +305,8 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* @layer base {
- h1,h2,h3,h4,h5,h6{
-  font-style: bold;
- }
-
- h1{
-  font-size:3rem;
- }
- h2{
-  font-size:
- }
-} */
+@layer base {
+  * {
+    font-family: Georgia;
+  }
+}

@@ -2,38 +2,47 @@
 
 import { Board, Info } from "@/game/board";
 import { Game as PhaserGame } from "phaser";
-import { config, RangiGame } from "@/game/scene";
-import { Suspense, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { GameContext, GameContextType } from "./skeleton";
+import { config } from "@/game/scene";
+import {  useContext, useEffect, useRef } from "react";
+import { GameContext} from "./skeleton";
 import { WHITE } from "@/lib/constants";
 import useSWR from "swr";
-import { ErrorBoundary } from "react-error-boundary";
-import GameLoading, { GridSkeleton } from "./skeletons/GameLoading";
+import { GridSkeleton } from "./skeletons/GameLoading";
+import { redirect, useRouter } from "next/navigation";
 
-const url = process.env.NEXT_PUBLIC_URL;
+
+const url = process.env.NEXT_PUBLIC_NETWORK_URL || process.env.NEXT_PUBLIC_URL ;
 const options = {
     revalidateIfStale: true,
     revalidateOnFocus: false,
-    revalidateOnReconnect: false
-
+    revalidateOnReconnect: false,
+    revalidateOnMount: true
 }
 
 const fetcher = async (url: string) => {
 
-    const res = await fetch(url, {
-       mode:"cors"
-    });
+    const res = await fetch(url);
     if (res.ok) {
-        const info = (await res.json()).info;
-        return info;
+        const { info, id } = await res.json();
+
+        return { info, id };
     }
     return new Error("Something died")
 }
+
 export default function Game() {
     const canvasContainerRef = useRef<HTMLDivElement>(null);
-    const { dimensions, colors, isModalShowing, disableBtns, gameCount } = useContext(GameContext);
+    const { replace, push } = useRouter();
+
+    const { dimensions, colors, id, gameCount, disableBtns, setGameId, setLink } = useContext(GameContext);
+
+    const gameUrl = id && gameCount === 0 ? `${url}/boards/${id}` : `${url}/${dimensions}/board` ;
+    if (gameCount === 1 && id) {
+        redirect(`/${dimensions}`);
+    }
+
     const { data, error, isLoading } = useSWR(
-        `http://localhost:3000/${dimensions}/board`,
+        gameUrl,
         // 'http://192.168.0.158:3000/10/board',
         fetcher, options
     )
@@ -41,14 +50,19 @@ export default function Game() {
     useEffect(() => {
         if (data) {
             Board.dims = dimensions;
-            Board.newGameCount = gameCount;
             Board.canvasWidth = canvasContainerRef!.current!.getBoundingClientRect().width;
-            Board.info = data;
+            /* @ts-expect-error */
+            Board.info = data.info;
+          
+            if(Board.palette === null){
             Board.palette = [...colors, WHITE];
+            }
             const w = Board.canvasWidth;
             const game = new PhaserGame({ ...config, width: w, height: w });
-            disableBtns(false)
-
+            disableBtns(false);
+            /* @ts-expect-error */
+            setGameId(data.id);
+            setLink(`${url}/${dimensions}/${data.id}`);
             return () => {
                 game.destroy(true);
             }

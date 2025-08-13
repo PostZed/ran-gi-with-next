@@ -65,6 +65,9 @@ class Board {
         let list = this.gridToArray(clueGrid);
         (list = list.map((item) => {
             item.count || (item.count = 0), item.isClueSquare || (item.isClueSquare = !1);
+            if(item.hint === NUM_ONLY || item.hint === EMPTY){
+                item.color = WHITE ;
+            }
             const { col: col, row: row, color: color, hint: hint, count: count, isClueSquare: isClueSquare } = item,
                 pojo = Object.assign({}, { col: col, row: row, color: color, hint: hint, count: count, isClueSquare: isClueSquare });
             return pojo;

@@ -16,6 +16,9 @@ export function Result() {
 
     function doNewGame() {
         setGameCount(gameCount + 1);
+      //  Board.canRespond = true;
+        disableBtns(false);
+        setVisible(false)
     }
 
     return <div className="alerts">

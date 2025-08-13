@@ -24,7 +24,7 @@ return <button className="confirmBtn" onClick={props.handler}>
 }
 
 export function TextZone({text} : {text:string}){
-return <div className="w-full border border-gray-200 bg-gray-100">
-<h1>{text}</h1>
+return <div className="w-full">
+<h1 className="text-lg px-1">{text}</h1>
 </div>
 }

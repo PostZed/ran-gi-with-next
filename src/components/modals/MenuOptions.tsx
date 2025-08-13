@@ -13,7 +13,7 @@ type OptionsType = {
 const optionsMap: OptionsType[] = [
     { title: "Change palette", componentKey: "palette" },
     { title: "Change board dimensions", componentKey: "change-dimensions" },
-    { title: "Get game link", componentKey: "" }
+    { title: "Get game link", componentKey: "link" }
 ]
 
 export default function MenuButtons(
@@ -29,8 +29,8 @@ export default function MenuButtons(
 
     return (<div className="max-w-7/10 h-fit bg-gray-200 absolute right-0 top-0 border">
         <div className="flex justify-between h-8 items-center">
-            <h3 className="h-9/10">Menu</h3>
-            <button className="appearance-none hover:border" onClick={() => {
+            <h3 className="h-9/10 px-2">Menu</h3>
+            <button className="appearance-none hover:border px-2" onClick={() => {
                 Board.canRespond = true ;
                 setVisible(false);
                 disableBtns(false) ;
@@ -45,10 +45,10 @@ export default function MenuButtons(
                 hover:bg-gray-400 px-2"
                     onClick={(e) => {
                         setVisible(true)
-                        Board.canRespond =true ;
+                        Board.canRespond = false ;
                         setModalName(option.componentKey);
                     }}>
-                    <button className="appearance-none bg-inherit">
+                    <button className="appearance-none h-9 md:h-full bg-inherit">
                         {option.title}
                     </button>
                 </li>

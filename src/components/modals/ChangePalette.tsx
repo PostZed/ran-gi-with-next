@@ -77,7 +77,7 @@ export default function Palette(
                 />
             ))}
         </div>
-        <button className="w-6/10 mx-auto px-2 btn"
+        <button className="w-6/10 mx-auto flex-none px-2 btn"
             disabled={selectedCount < 4} onClick={() => {
                 const nuColors: number[] = [];
                 selectedColors.forEach((bool, i) => {
@@ -119,8 +119,8 @@ function ColorOption(props: ColorOptionProps) {
 
     let colorClassName = props.hexCode.substring(1);
     colorClassName = "#" + colorClassName.padStart(6, "0")
-    return (<div className="flex items-center h-6 border-box">
-        <input type="checkbox" defaultChecked={props.isSelected} className="mx-1"
+    return (<div className="flex h-9 items-center md:h-6 border-box">
+        <input type="checkbox" defaultChecked={props.isSelected} className="mx-2 md:mx-1"
             onChange={(e) => {
                 const isChecked = e.target.checked;
                 const maxIsChecked = props.selectedCount === 4;

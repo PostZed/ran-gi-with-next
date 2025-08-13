@@ -1,17 +1,17 @@
 "use client";
-import { createContext, Suspense, useRef, useState } from "react";
+import { createContext, useRef, useState } from "react";
 import TopButtons from "./top-buttons";
 import Game, { BlurWrapper } from "./game";
 import { colors as defaultColors, WHITE } from "@/lib/constants";
 import Palette from "./modals/ChangePalette";
-import { Board } from "@/game/board";
 import MenuButtons from "./modals/MenuOptions";
-import { ErrorBoundary } from "react-error-boundary";
 import ChangeSize from "./modals/ChangeSize";
 import { Result } from "./alerts/result";
 import { ConfirmNewGame } from "./alerts/confirm";
 import ButtonBar from "./bottom-buttons/bottom-buttons";
 import Verifying from "./alerts/verify";
+import HowToPlay from "./instructions";
+import GameLink from "./modals/Link";
 
 
 export type GameContextType = {
@@ -21,14 +21,19 @@ export type GameContextType = {
     setModalName: (name: string) => void;
     setDimensions: (n: number) => void;
     modalName: string;
-    isModalShowing:boolean;
+    isModalShowing: boolean;
     colorBarParent: { current: HTMLElement | null };
-    hasWon : boolean;
-    setHasWon:(b:boolean)=>void,
-    disableBtns:(b:boolean)=>void,
-    btnsDisabled : boolean,
-    gameCount:number;
-    setGameCount:(n:number)=>void
+    hasWon: boolean;
+    setHasWon: (b: boolean) => void,
+    disableBtns: (b: boolean) => void,
+    btnsDisabled: boolean,
+    gameCount: number;
+    setGameCount: (n: number) => void;
+    id: string | undefined;
+    setGameId: (s: string) => void
+    link: string;
+    setLink: (n: string) => void;
+
 };
 
 export const GameContext = createContext<GameContextType>({
@@ -38,14 +43,18 @@ export const GameContext = createContext<GameContextType>({
     setModalName: (name: string) => { },
     setDimensions: (n: number) => { },
     modalName: " ",
-    isModalShowing:false,
+    isModalShowing: false,
     colorBarParent: { current: null },
-    hasWon : false ,
-    setHasWon:(b:boolean)=>{},
-    disableBtns:(b:boolean)=>{},
-    btnsDisabled:true,
-    gameCount:0,
-    setGameCount:(n:number)=>{}
+    hasWon: false,
+    setHasWon: (b: boolean) => { },
+    disableBtns: (b: boolean) => { },
+    btnsDisabled: true,
+    gameCount: 0,
+    setGameCount: (n: number) => { },
+    id: undefined,
+    setGameId: (str: string) => { },
+    link: "",
+    setLink: (n: string) => { }
 })
 
 
@@ -53,28 +62,53 @@ const modalMap = {
     palette: Palette,
     menu: MenuButtons,
     "change-dimensions": ChangeSize,
-    "winLossAlert":Result,
-    "confirm" : ConfirmNewGame,
-    "verify" : Verifying
+    "winLossAlert": Result,
+    "confirm": ConfirmNewGame,
+    "verify": Verifying,
+    instructions: HowToPlay,
+    link: GameLink
 }
 
 function Empty() {
     return null;
 }
 
-export default function Skeleton() {
+type SkeletonProps = {
+    id?: string;
+    size?: number
+}
+
+const url = process.env.NEXT_PUBLIC_URL;
+
+export default function Skeleton({ id, size }: SkeletonProps) {
 
     const [colors, setColors] = useState<number[]>(() => {
         return JSON.parse(window.localStorage.getItem('colors') || "null") || defaultColors;
     });
     const [dimensions, setDimensions] = useState(() => {
+        if (id)
+            return size;
         return JSON.parse(window.localStorage.getItem('dimensions') || "null") || 10;
     });
     const [isModalShowing, setIsModalShowing] = useState(false);
     const [modalName, setModalName] = useState("");
-    const [gameCount,setGameCount] = useState(0) ;
-    const [hasWon,setHasWon] = useState(false) ;
-    const [btnsDisabled,disableBtns] = useState(true) ;
+    const [gameCount, setGameCount] = useState(0);
+    const [hasWon, setHasWon] = useState(false);
+    const [btnsDisabled, disableBtns] = useState(true);
+    const [gameId, setGameId] = useState(() => {
+        if (id)
+            return id;
+
+        return null;
+    })
+    const [link, setLink] = useState(() => {
+        if (id) {
+            return `${url}/${size}/${id}`;
+
+        }
+
+        return "";
+    });
     const colorBarRef = useRef(null);
 
     /* @ts-expect-error */
@@ -89,19 +123,20 @@ export default function Skeleton() {
         modalName,
         isModalShowing,
         colorBarParent: colorBarRef,
-        gameCount,setGameCount,
-        hasWon,setHasWon,
-        btnsDisabled,disableBtns
+        gameCount, setGameCount,
+        hasWon, setHasWon,
+        btnsDisabled, disableBtns, id,
+        setGameId, gameId, link, setLink
     }
 
     return (
         <GameContext value={obj}>
             <TopButtons ref={colorBarRef} />
-           
-           <BlurWrapper blur={isModalShowing}>
+
+            <BlurWrapper blur={isModalShowing}>
                 <Game key={`${gameCount}`} />
             </BlurWrapper>
-         
+
             {isModalShowing && <Modal />}
             <ButtonBar />
         </GameContext>

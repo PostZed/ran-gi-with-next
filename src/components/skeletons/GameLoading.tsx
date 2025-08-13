@@ -26,11 +26,12 @@ export function GridSkeleton({ size }: { size: number }) {
     const mySkeleton = list[size - 7].info;
 
     return <div className={`grid grid-cols-${size} grid-rows-{size} w-full h-full`}>{
-        mySkeleton.map((item) => {
+        mySkeleton.map((item,i) => {
             const {col , row} = item 
             let color = colorMap.get(item.color);
-            return <div className={`row-start-${row+1} col-start-${col+1} bg-${color} animate-glimmer`}></div>
+            return <div key={i} className={`row-start-${row+1} col-start-${col+1} bg-${color} animate-glimmer`}></div>
         })
     }
+    <h1 className="text-2xl absolute top-[48%] p-4">Loading...</h1>
     </div>
 }

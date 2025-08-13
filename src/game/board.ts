@@ -2,7 +2,7 @@
 
 import { BOTH, colors, EMPTY, NUM_ONLY, SQ_ONLY, WHITE } from "@/lib/constants";
 import { GameObjects, Scene } from "phaser";
-
+import Solver from './solver'
 
 export type Info = {
     isClueSquare: boolean,
@@ -19,16 +19,17 @@ export class Board {
     static dims = 10;
     static list: Tile[] = [];
     static canvasWidth: number;
-    static palette: number[];
+    static palette: number[] | null = null;
     static canRespond = true;
     static newGameCount = 0;
+
 
     static changePayloadColors(payload: Info[]) {
         let info = JSON.stringify(payload);
         info = JSON.parse(info);
         const savedPalette = this.palette.slice(0, 4);
         const isDifferent = this.paletteIsDifferent(colors, savedPalette);
-        console.log(colors)
+       
         if (!isDifferent)
             return info;
 
@@ -41,10 +42,43 @@ export class Board {
 
     }
 
+    // static isCorrect() {
+    //     const isCorrect = this.list.every(item => {
+    //         return item.fillColor === item.myColor;
+    //     });
+    //     return isCorrect;
+    // }
+
     static isCorrect() {
-        const isCorrect = this.list.every(item => {
-            return item.fillColor === item.myColor;
+        let grid: any = [];
+        for (let col = 0; col < this.dims; col++) {
+            grid[col] = []
+            for (let row = 0; row < this.dims; row++) {
+                grid[col][row] = null
+            }
+        }
+
+        let tempList = this.list.map((tile) => {
+            const { col, row, hint, myColor, myNum } = tile;
+            let color;
+            if (hint === NUM_ONLY || hint === EMPTY) {
+                color = WHITE;
+            }
+            else {
+                color = myColor
+            }
+            const nuTile = { col, row, hint, color, count: myNum ? myNum : undefined }
+            grid[col][row] = nuTile;
+            return nuTile;
         });
+
+        const solver = new Solver(this.dims, this.dims, this.palette.slice(0, 4));
+        solver.solveAll(grid);
+
+        const isCorrect = this.list.every((tile, i) => {
+            return tile.fillColor === tempList[i].color;
+        });
+
         return isCorrect;
     }
 
@@ -73,10 +107,10 @@ export class Board {
         for (let i = 0; i < this.list.length; i++) {
             const tile = this.list[i];
             if (tile.fillColor !== WHITE) {
-                const colorIndex = currentPalette.findIndex(c => c === tile.myColor);
-                tile.myColor = colorList[colorIndex]
                 const currentColor = currentPalette.findIndex(c => c === tile.fillColor);
-                tile.fillColor = colorList[colorIndex];
+                tile.fillColor = colorList[currentColor];
+                if(tile.hint === SQ_ONLY || tile.hint === BOTH)
+                    tile.myColor = colorList[currentColor];
             }
 
         }
@@ -138,10 +172,11 @@ export class Tile extends GameObjects.Rectangle {
         this.col = col;
         this.row = row;
         this.hint = hint;
+        this.setStrokeStyle(1, 0x808080)
         // if (hint === EMPTY || hint === NUM_ONLY) {
         this.setInteractive();
         this.on("pointerdown", () => {
-            console.log(this);
+           
             if (this.hint === BOTH || this.hint === SQ_ONLY || Board.canRespond === false)
                 return;
             this.changeColor();
@@ -170,14 +205,14 @@ export class Tile extends GameObjects.Rectangle {
             // this.numHint = Tile.scene.add.text(this.x + Tile.size / 2, this.y + Tile.size / 2, "", {
             //     color: "#000000", fontSize: `${0.7 * Tile.size}px`
             // }).setOrigin(0.5);
-
+            const fontSize = this.myNum < 10 ? 0.7 * Tile.size : 0.35 * Tile.size
             const estilo = `color:transparent;
             background-clip:text;
             background-color:black;
-            font-size: ${0.7 * Tile.size}px;
-            font-family:var(--font-geist-mono)`
+            font-size: ${fontSize}px;
+            font-family:Georgia`
             this.numHint = Tile.scene.add.dom(this.x + Tile.size / 2, this.y + Tile.size / 2, "div", estilo, "" + this.myNum)
-            
+            this.numHint.node.setAttribute("inert", "true");
         }
     }
 
@@ -185,11 +220,13 @@ export class Tile extends GameObjects.Rectangle {
     changeColor() {
         if (this.palettePos >= 0 && this.palettePos <= 3) {
 
-            this.fillColor = Board.palette[this.palettePos]
+            this.fillColor = Board.palette![this.palettePos]
+            this.setFillStyle(Board.palette![this.palettePos], 1)
             this.palettePos++;
         }
         else {
-            this.fillColor = Board.palette[4];
+            this.fillColor = Board.palette![4];
+            this.setFillStyle(Board.palette![this.palettePos], 1)
             this.palettePos = 0;
         }
 

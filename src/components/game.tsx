@@ -11,7 +11,7 @@ import { GridSkeleton } from "./skeletons/GameLoading";
 import { redirect, useRouter } from "next/navigation";
 
 
-const url = process.env.NEXT_PUBLIC_NETWORK_URL || process.env.NEXT_PUBLIC_URL ;
+const url = process.env.NEXT_PUBLIC_VERCEL_URL  || process.env.NEXT_PUBLIC_URL ;
 const options = {
     revalidateIfStale: true,
     revalidateOnFocus: false,

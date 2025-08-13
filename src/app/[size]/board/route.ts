@@ -5,7 +5,7 @@ import  Game  from "@/models/RangiBoard";
 
 export async function GET(request: Request, { params }: { params: Promise<{ size: string }> }) {
     let puzzle, entry;
-  //  await dbConnect();
+  await dbConnect();
     try {
 
         let dims: any = (await params).size;
@@ -13,8 +13,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ size
         if (!dims || isNaN(dims))
             throw new SyntaxError("Size is not a valid number.");
         puzzle = new Board(dims, dims);
-        // entry = new Game({ squares: puzzle.boardData, dimensions: dims });
-        // await entry.save();
+        entry = new Game({ squares: puzzle.boardData, dimensions: dims });
+        await entry.save();
 
         return Response.json({ info: puzzle.boardData, id: entry._id }, {
             // headers: {

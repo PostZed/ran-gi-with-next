@@ -10,7 +10,7 @@ if (!cached) {
 }
 
 async function dbConnect() {
-  const MONGODB_URI = process.env.MONGO_LOCAL!;
+  const MONGODB_URI = process.env.MONGO_ATLAS!;
 
   if (!MONGODB_URI) {
     throw new Error(

@@ -25,7 +25,7 @@ const map2 = new Map<number, string>([
 export function GridSkeleton({ size }: { size: number }) {
     const mySkeleton = list[size - 7].info;
 
-    return <div className={`grid grid-cols-${size} grid-rows-{size} w-full h-full`}>{
+    return <div className={`grid grid-cols-${size} grid-rows-${size} w-full h-full`}>{
         mySkeleton.map((item,i) => {
             const {col , row} = item 
             let color = colorMap.get(item.color);

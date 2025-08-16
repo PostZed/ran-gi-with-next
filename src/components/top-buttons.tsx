@@ -22,6 +22,7 @@ export default function TopButtons({ ref }) {
                     onClick={(e) => {
                     setModalName("instructions") ;
                     setVisible(true) ;
+                    disableBtns(true) ;
                     Board.canRespond = false ; 
                     }}>How to play</button>
             </div>

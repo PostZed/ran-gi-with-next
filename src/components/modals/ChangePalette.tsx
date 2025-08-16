@@ -55,7 +55,7 @@ export default function Palette(
     return (<div className="flex flex-col bg-white border absolute left-0 top-0 z-10 max-w-7/10 max-h-[70%]">
         <div className="flex justify-between border border-gray-300">
             <h2 className="">Choose a different palette</h2>
-            <button className="appearance-none hover:border-1" onClick={() => {
+            <button className="appearance-none hover:border-1 mx-1" onClick={() => {
                 Board.canRespond =true;
                 setVisible(false);
                 disableBtns(false) ;

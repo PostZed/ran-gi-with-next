@@ -12,6 +12,8 @@ import ButtonBar from "./bottom-buttons/bottom-buttons";
 import Verifying from "./alerts/verify";
 import HowToPlay from "./instructions";
 import GameLink from "./modals/Link";
+import { FillState } from "@/game/board";
+import { Instructions } from "./new-instructions";
 
 
 export type GameContextType = {
@@ -23,8 +25,8 @@ export type GameContextType = {
     modalName: string;
     isModalShowing: boolean;
     colorBarParent: { current: HTMLElement | null };
-    hasWon: boolean;
-    setHasWon: (b: boolean) => void,
+    hasWon: FillState;
+    setHasWon: (b: FillState) => void,
     disableBtns: (b: boolean) => void,
     btnsDisabled: boolean,
     gameCount: number;
@@ -45,8 +47,8 @@ export const GameContext = createContext<GameContextType>({
     modalName: " ",
     isModalShowing: false,
     colorBarParent: { current: null },
-    hasWon: false,
-    setHasWon: (b: boolean) => { },
+    hasWon: "incomplete",
+    setHasWon: (b: FillState) => { },
     disableBtns: (b: boolean) => { },
     btnsDisabled: true,
     gameCount: 0,
@@ -65,7 +67,7 @@ const modalMap = {
     "winLossAlert": Result,
     "confirm": ConfirmNewGame,
     "verify": Verifying,
-    instructions: HowToPlay,
+    instructions: Instructions,
     link: GameLink
 }
 
@@ -93,7 +95,7 @@ export default function Skeleton({ id, size }: SkeletonProps) {
     const [isModalShowing, setIsModalShowing] = useState(false);
     const [modalName, setModalName] = useState("");
     const [gameCount, setGameCount] = useState(0);
-    const [hasWon, setHasWon] = useState(false);
+    const [hasWon, setHasWon] = useState<FillState>("incomplete");
     const [btnsDisabled, disableBtns] = useState(true);
     const [gameId, setGameId] = useState(() => {
         if (id)

@@ -20,7 +20,7 @@ export default function HowToPlay() {
                         <Carousel />
                     </div>
 
-                    <div className="max-sm:max-md:hidden h-full">
+                    <div className="hidden md:block">
                         <FigureList />
                     </div>
                 </div>
@@ -42,7 +42,7 @@ export default function HowToPlay() {
                         <h4 className="sticky top-0 bg-blue-200 z-20 text-center">Understanding the game</h4>
 
                         <div className="px-3">
-                            <p className="max-sm:max-md:hidden">The images on the left show the same Ran-gi puzzle, before and after being solved:</p>
+                            <p className="hidden md:block">The images on the left show the same Ran-gi puzzle, before and after being solved:</p>
                             <p className="md:hidden">The images above show the same Ran-gi puzzle, before and after being solved. (Press the arrow
                                 icons to switch between the 3 images.)
                             </p>

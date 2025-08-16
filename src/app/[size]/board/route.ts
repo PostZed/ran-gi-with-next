@@ -15,7 +15,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ size
         puzzle = new Board(dims, dims);
         entry = new Game({ squares: puzzle.boardData, dimensions: dims });
         await entry.save();
-
+console.log("Data fetched") ;
         return Response.json({ info: puzzle.boardData, id: entry._id }, {
             // headers: {
             //     'Access-Control-Allow-Origin': '*',

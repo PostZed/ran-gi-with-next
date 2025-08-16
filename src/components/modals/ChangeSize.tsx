@@ -11,7 +11,7 @@ export default function ChangeSize() {
         <div className="md:w-7/10 flex flex-col absolute bg-white rounded-md border">
             <div className="flex justify-between">
                 <h4 className="m-1">Choose the dimensions of your Ran-gi board:</h4>
-                <button className="appearance-none hover:border" onClick={() => {
+                <button className="appearance-none hover:border mx-1" onClick={() => {
                     setVisible(false)
                     setSelectedDimension(dimensions) ;
                     Board.canRespond = true;

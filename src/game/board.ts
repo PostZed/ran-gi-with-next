@@ -13,6 +13,8 @@ export type Info = {
     count: number
 }
 
+export type FillState = "correct" | "wrong" | "incomplete"
+
 export class Board {
     static info: any[];
     static scene: Phaser.Scene;
@@ -49,7 +51,7 @@ export class Board {
     //     return isCorrect;
     // }
 
-    static isCorrect() {
+    static isCorrect(): FillState {
         let grid: any = [];
         for (let col = 0; col < this.dims; col++) {
             grid[col] = []
@@ -57,6 +59,12 @@ export class Board {
                 grid[col][row] = null
             }
         }
+
+        const isFilled = this.list.every((tile) => {
+            return tile.fillColor !== WHITE;
+        }) ;
+        if(!isFilled)
+            return "incomplete" ;
 
         let tempList = this.list.map((tile) => {
             const { col, row, hint, myColor, myNum } = tile;
@@ -79,7 +87,9 @@ export class Board {
             return tile.fillColor === tempList[i].color;
         });
 
-        return isCorrect;
+        if(isCorrect)
+            return "correct" ;
+        return "wrong" ;
     }
 
     static paletteIsDifferent(nuPalette: number[], currentPalette: number[]) {

@@ -27,7 +27,7 @@ export function Instructions() {
 
             <p>A number, (for example 3) indicates that a square is part of a line of 3 similarly coloured boxes. Lines can only be horizontal or vertical.</p>
 
-            <p>Two strips of sqaures of the same colour cannot touch each other at any of their edges.</p>
+            <p>Two strips of squares of the same colour cannot touch each other at any of their edges.</p>
             <p>Look at Figure C for clarification. None of the squares marked "X" is allowed to be yellow. The ticked squares are not 
                 in direct contact with the yellow strip. They are allowed to be yellow.
             </p>

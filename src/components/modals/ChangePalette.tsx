@@ -47,7 +47,7 @@ export default function Palette(
     //     setModalName
     // }: GameContextType
 ) {
-    const { setVisible,  colors, colorBarParent, disableBtns } = useContext(GameContext);
+    const { setVisible, setColors, colors, disableBtns } = useContext(GameContext);
 
     const [selectedColors, setSelectedColors] = useState(() => findSelected(colors));
     const [selectedCount, setSelectedCount] = useState(4)
@@ -90,10 +90,7 @@ export default function Palette(
                 const json = JSON.stringify(nuColors);
                 localStorage.setItem('colors', json);
                 Board.changePalette(nuColors);
-                const colorHints = Array.from(colorBarParent.current.querySelectorAll("div"));
-                colorHints.forEach((lilDiv, i) => {
-                    lilDiv.style.backgroundColor = decimalToHexString(nuColors[i]);
-                })
+                setColors(nuColors)
                 Board.canRespond = true;
                 setVisible(false);
                 disableBtns(false)

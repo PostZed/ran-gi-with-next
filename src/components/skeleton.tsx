@@ -19,12 +19,12 @@ import { Instructions } from "./new-instructions";
 export type GameContextType = {
     dimensions: number;
     colors: number[];
+    setColors:(n:number[])=>void
     setVisible: (b: boolean) => void;
     setModalName: (name: string) => void;
     setDimensions: (n: number) => void;
     modalName: string;
     isModalShowing: boolean;
-    colorBarParent: { current: HTMLElement | null };
     hasWon: FillState;
     setHasWon: (b: FillState) => void,
     disableBtns: (b: boolean) => void,
@@ -41,12 +41,12 @@ export type GameContextType = {
 export const GameContext = createContext<GameContextType>({
     dimensions: 10,
     colors: defaultColors,
+    setColors:(n:number[])=>{},
     setVisible: (b: boolean) => { },
     setModalName: (name: string) => { },
     setDimensions: (n: number) => { },
     modalName: " ",
     isModalShowing: false,
-    colorBarParent: { current: null },
     hasWon: "incomplete",
     setHasWon: (b: FillState) => { },
     disableBtns: (b: boolean) => { },
@@ -92,6 +92,7 @@ export default function Skeleton({ id, size }: SkeletonProps) {
             return size;
         return JSON.parse(window.localStorage.getItem('dimensions') || "null") || 10;
     });
+    
     const [isModalShowing, setIsModalShowing] = useState(false);
     const [modalName, setModalName] = useState("");
     const [gameCount, setGameCount] = useState(0);
@@ -111,7 +112,6 @@ export default function Skeleton({ id, size }: SkeletonProps) {
 
         return "";
     });
-    const colorBarRef = useRef(null);
 
     /* @ts-expect-error */
     const Modal = isModalShowing && modalName in modalMap ? modalMap[modalName] : Empty;
@@ -124,7 +124,6 @@ export default function Skeleton({ id, size }: SkeletonProps) {
         setDimensions, setColors,
         modalName,
         isModalShowing,
-        colorBarParent: colorBarRef,
         gameCount, setGameCount,
         hasWon, setHasWon,
         btnsDisabled, disableBtns, id,
@@ -133,7 +132,7 @@ export default function Skeleton({ id, size }: SkeletonProps) {
 
     return (
         <GameContext value={obj}>
-            <TopButtons ref={colorBarRef} />
+            <TopButtons />
 
             <BlurWrapper blur={isModalShowing}>
                 <Game key={`${gameCount}`} />

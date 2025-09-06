@@ -10,13 +10,13 @@ import { GameContext } from './skeleton';
 
 const url = process.env.NEXT_PUBLIC_URL;
 
-export default function TopButtons({ ref }) {
+export default function TopButtons() {
     const { setVisible, setModalName, disableBtns, btnsDisabled } = useContext(GameContext);
 
 
     return (
         <div className="flex justify-between box-border pt-1 pb-1 align-items">
-            <ColorBar ref={ref} />
+            <ColorBar />
             <div className="flex-1">
                 <button className='btn  rounded-full px-3 flex-1 text-center' disabled={btnsDisabled}
                     onClick={(e) => {
@@ -39,9 +39,9 @@ export default function TopButtons({ ref }) {
     );
 }
 
-function ColorBar({ ref }) {
+function ColorBar() {
     const { colors } = useContext(GameContext);
-    return (<div className='flex flex-1 h-6 pt-1 pb-1' ref={ref}>
+    return (<div className='flex flex-1 h-6 pt-1 pb-1'>
         {Array.from({ length: 4 }).map((_, i) => {
             const inHex = Number(colors[i]).toString(16);
 

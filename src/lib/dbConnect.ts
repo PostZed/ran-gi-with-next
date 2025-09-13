@@ -24,7 +24,7 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 100
+      serverSelectionTimeoutMS: 2000
     };
     mongoose.set('debug', process.env.MONGO_DEBUG);
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {

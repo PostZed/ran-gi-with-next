@@ -65,7 +65,7 @@ export default function Game() {
     const gameUrl = gameId && gameCount === 0 ? `${url}/boards/${gameId}` : `${url}/${dimensions}/board`;
     //const gameUrl = gameId && gameCount === 0 ? `${url}/boards/${gameId}` : `${url}/t/board`;
     if (gameCount === 1 && id) {
-        redirect(`/${dimensions}`);
+        redirect(`/`);
     }
 
     const { data, error, isLoading } = useSWR(

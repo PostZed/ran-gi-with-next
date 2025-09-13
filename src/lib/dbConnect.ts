@@ -24,6 +24,7 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 100
     };
     mongoose.set('debug', process.env.MONGO_DEBUG);
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
@@ -32,6 +33,8 @@ async function dbConnect() {
   }
   try {
     cached.conn = await cached.promise;
+    if (cached.conn === undefined)
+      throw new Error();
   } catch (e) {
     cached.promise = null;
     throw e;

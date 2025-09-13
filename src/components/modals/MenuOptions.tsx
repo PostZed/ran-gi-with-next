@@ -7,7 +7,8 @@ import { Board } from "@/game/board";
 
 type OptionsType = {
     title: string;
-    componentKey: string
+    componentKey: string,
+
 }
 
 const optionsMap: OptionsType[] = [
@@ -16,36 +17,31 @@ const optionsMap: OptionsType[] = [
     { title: "Get game link", componentKey: "link" }
 ]
 
-export default function MenuButtons(
-    //     {
-    //     dimensions,
-    //     colors,
-    //     setVisible,
-    //     setModalName
-    // }: GameContextType
-) {
-    const { setVisible, setModalName, disableBtns } = useContext(GameContext);
+export default function MenuButtons() {
+    const { setVisible, setModalName, disableBtns, gameId } = useContext(GameContext);
     const myName = "menu";
 
     return (<div className="max-w-7/10 h-fit bg-gray-200 absolute right-0 top-0 border">
         <div className="flex justify-between h-8 items-center">
             <h3 className="h-9/10 px-2">Menu</h3>
             <button className="appearance-none hover:border px-2" onClick={() => {
-                Board.canRespond = true ;
+                Board.canRespond = true;
                 setVisible(false);
-                disableBtns(false) ;
+                disableBtns(false);
             }
             }>
                 <XMarkIcon className="w-7" />
             </button>
         </div>
         <div>
-            {optionsMap.map(option => {
+            {optionsMap.map((option, i) => {
+                if (i == 2 && gameId === null)
+                    return null;
                 return <li key={option.title} className="bg-gray-100 list-none border-2 border-gray-50 rounded-md
                 hover:bg-gray-400 px-2"
                     onClick={(e) => {
                         setVisible(true)
-                        Board.canRespond = false ;
+                        Board.canRespond = false;
                         setModalName(option.componentKey);
                     }}>
                     <button className="appearance-none h-9 md:h-full bg-inherit">

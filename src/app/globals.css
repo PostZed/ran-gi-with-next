@@ -103,13 +103,25 @@
 
   @keyframes slide-in2 {
     0% {
-      position: relative;
+      position: absolute;
       right: -100%;
     }
 
     100% {
-      position: relative;
+      position: absolute;
       right: 0;
+    }
+  }
+
+  --animate-conveyor: conveyor 1500ms linear infinite alternate;
+
+  @keyframes conveyor {
+    0% {
+      scale: 80%
+    }
+
+    100% {
+      scale: 110%
     }
   }
 }
@@ -144,9 +156,10 @@
     border: 1px black solid;
     border-radius: 5px;
     font-size: medium;
-    @media(min-width:768px) {
+
+    @media (min-width:768px) {
       height: calc(6rem * 0.25);
-      
+
     }
 
     &:hover {

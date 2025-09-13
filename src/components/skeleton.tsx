@@ -10,7 +10,6 @@ import { Result } from "./alerts/result";
 import { ConfirmNewGame } from "./alerts/confirm";
 import ButtonBar from "./bottom-buttons/bottom-buttons";
 import Verifying from "./alerts/verify";
-import HowToPlay from "./instructions";
 import GameLink from "./modals/Link";
 import { FillState } from "@/game/board";
 import { Instructions } from "./new-instructions";
@@ -19,7 +18,7 @@ import { Instructions } from "./new-instructions";
 export type GameContextType = {
     dimensions: number;
     colors: number[];
-    setColors:(n:number[])=>void
+    setColors: (n: number[]) => void
     setVisible: (b: boolean) => void;
     setModalName: (name: string) => void;
     setDimensions: (n: number) => void;
@@ -31,7 +30,7 @@ export type GameContextType = {
     btnsDisabled: boolean,
     gameCount: number;
     setGameCount: (n: number) => void;
-    id: string | undefined;
+    gameId: string | null;
     setGameId: (s: string) => void
     link: string;
     setLink: (n: string) => void;
@@ -41,7 +40,7 @@ export type GameContextType = {
 export const GameContext = createContext<GameContextType>({
     dimensions: 10,
     colors: defaultColors,
-    setColors:(n:number[])=>{},
+    setColors: (n: number[]) => { },
     setVisible: (b: boolean) => { },
     setModalName: (name: string) => { },
     setDimensions: (n: number) => { },
@@ -53,7 +52,7 @@ export const GameContext = createContext<GameContextType>({
     btnsDisabled: true,
     gameCount: 0,
     setGameCount: (n: number) => { },
-    id: undefined,
+    gameId: undefined,
     setGameId: (str: string) => { },
     link: "",
     setLink: (n: string) => { }
@@ -92,7 +91,7 @@ export default function Skeleton({ id, size }: SkeletonProps) {
             return size;
         return JSON.parse(window.localStorage.getItem('dimensions') || "null") || 10;
     });
-    
+
     const [isModalShowing, setIsModalShowing] = useState(false);
     const [modalName, setModalName] = useState("");
     const [gameCount, setGameCount] = useState(0);
@@ -126,8 +125,8 @@ export default function Skeleton({ id, size }: SkeletonProps) {
         isModalShowing,
         gameCount, setGameCount,
         hasWon, setHasWon,
-        btnsDisabled, disableBtns, id,
-        setGameId, gameId, link, setLink
+        btnsDisabled, disableBtns, gameId,
+        setGameId, link, setLink
     }
 
     return (

@@ -26,13 +26,13 @@ export function GridSkeleton({ size }: { size: number }) {
     const mySkeleton = list[size - 7].info;
 
     return <div className={`grid grid-cols-${size}  grid-rows-${size} w-full h-full`}>{
-        mySkeleton.map((item,i) => {
-            const {col , row} = item 
+        mySkeleton.map((item, i) => {
+            const { col, row } = item
             let color = map2.get(item.color);
             return <div key={i} className={`animate-glimmer`}
-            style={{backgroundColor : color, gridRowStart:row+1, gridColumnStart: col+1}}></div>
+                style={{ backgroundColor: color, gridRowStart: row + 1, gridColumnStart: col + 1 }}></div>
         })
     }
-    <h1 className="text-2xl absolute top-[48%] p-4">Loading...</h1>
+        <h1 className="text-2xl absolute top-[48%] p-4">Loading...</h1>
     </div>
 }

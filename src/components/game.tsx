@@ -61,10 +61,10 @@ const fetcher = async (url: string) => {
 export default function Game() {
     const canvasContainerRef = useRef<HTMLDivElement>(null);
 
-    const { dimensions, colors, gameId, gameCount, disableBtns, setGameId, setLink } = useContext(GameContext);
+    const { dimensions, colors, gameId, gameCount, disableBtns, id, setGameId, setLink } = useContext(GameContext);
     const gameUrl = gameId && gameCount === 0 ? `${url}/boards/${gameId}` : `${url}/${dimensions}/board`;
     //const gameUrl = gameId && gameCount === 0 ? `${url}/boards/${gameId}` : `${url}/t/board`;
-    if (gameCount === 1 && gameId) {
+    if (gameCount === 1 && id) {
         redirect(`/${dimensions}`);
     }
 

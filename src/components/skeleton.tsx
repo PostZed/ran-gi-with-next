@@ -31,6 +31,7 @@ export type GameContextType = {
     gameCount: number;
     setGameCount: (n: number) => void;
     gameId: string | null;
+    id: string | undefined;
     setGameId: (s: string) => void
     link: string;
     setLink: (n: string) => void;
@@ -52,8 +53,9 @@ export const GameContext = createContext<GameContextType>({
     btnsDisabled: true,
     gameCount: 0,
     setGameCount: (n: number) => { },
-    gameId: undefined,
+    gameId: null,
     setGameId: (str: string) => { },
+    id: undefined,
     link: "",
     setLink: (n: string) => { }
 })
@@ -125,7 +127,7 @@ export default function Skeleton({ id, size }: SkeletonProps) {
         isModalShowing,
         gameCount, setGameCount,
         hasWon, setHasWon,
-        btnsDisabled, disableBtns, gameId,
+        btnsDisabled, disableBtns, gameId, id,
         setGameId, link, setLink
     }
 

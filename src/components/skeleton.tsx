@@ -13,7 +13,8 @@ import Verifying from "./alerts/verify";
 import GameLink from "./modals/Link";
 import { FillState } from "@/game/board";
 import { Instructions } from "./new-instructions";
-
+import { ApolloProvider } from "@apollo/client/react";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 
 export type GameContextType = {
     dimensions: number;
@@ -37,6 +38,11 @@ export type GameContextType = {
     setLink: (n: string) => void;
 
 };
+
+const apolloClient = new ApolloClient({
+    link: new HttpLink({ uri: 'http://localhost:3000/api/graphql' }),
+    cache: new InMemoryCache(),
+});
 
 export const GameContext = createContext<GameContextType>({
     dimensions: 10,
@@ -132,15 +138,17 @@ export default function Skeleton({ id, size }: SkeletonProps) {
     }
 
     return (
-        <GameContext value={obj}>
-            <TopButtons />
+        <ApolloProvider client={apolloClient}>
+            <GameContext value={obj}>
+                <TopButtons />
 
-            <BlurWrapper blur={isModalShowing}>
-                <Game key={`${gameCount}`} />
-            </BlurWrapper>
+                <BlurWrapper blur={isModalShowing}>
+                    <Game key={`${gameCount}`} />
+                </BlurWrapper>
 
-            {isModalShowing && <Modal />}
-            <ButtonBar />
-        </GameContext>
+                {isModalShowing && <Modal />}
+                <ButtonBar />
+            </GameContext>
+        </ApolloProvider>
     );
 }

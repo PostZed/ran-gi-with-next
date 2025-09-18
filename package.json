@@ -11,6 +11,10 @@
     "genjson": "tsx scripts/generatejson.ts"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.5",
+    "@apollo/server": "^5.0.0",
+    "@as-integrations/next": "^4.0.0",
+    "@graphql-tools/schema": "^10.0.25",
     "@heroicons/react": "^2.2.0",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
@@ -21,6 +25,7 @@
     "@types/mdx": "^2.0.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "graphql": "^16.11.0",
     "lucide-react": "^0.537.0",
     "mongoose": "^8.16.5",
     "next": "15.4.2",
@@ -29,6 +34,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-error-boundary": "^6.0.0",
+    "rxjs": "^7.8.2",
     "swr": "^2.3.4",
     "tailwind-merge": "^3.3.1",
     "tsx": "^4.20.3"

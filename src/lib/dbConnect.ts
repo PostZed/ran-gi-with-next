@@ -27,14 +27,18 @@ async function dbConnect() {
       serverSelectionTimeoutMS: 2000
     };
     mongoose.set('debug', process.env.MONGO_DEBUG);
+    mongoose.connection.on("disconnected", () => {
+      cached.conn = null;
+      cached.promise = null;
+    })
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+
       return mongoose;
     });
   }
   try {
     cached.conn = await cached.promise;
-    if (cached.conn === undefined)
-      throw new Error();
+
   } catch (e) {
     cached.promise = null;
     throw e;

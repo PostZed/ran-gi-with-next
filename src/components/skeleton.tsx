@@ -40,7 +40,7 @@ export type GameContextType = {
 };
 
 const apolloClient = new ApolloClient({
-    link: new HttpLink({ uri: 'http://localhost:3000/api/graphql' }),
+    link: new HttpLink({ uri: `${process.env.NEXT_PUBLIC_VERCEL_URL || process.env.NEXT_PUBLIC_URL}/api/graphql` }),
     cache: new InMemoryCache(),
 });
 

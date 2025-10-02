@@ -31,7 +31,7 @@ export class Board {
         info = JSON.parse(info);
         const savedPalette = this.palette.slice(0, 4);
         const isDifferent = this.paletteIsDifferent(colors, savedPalette);
-       
+
         if (!isDifferent)
             return info;
 
@@ -62,9 +62,9 @@ export class Board {
 
         const isFilled = this.list.every((tile) => {
             return tile.fillColor !== WHITE;
-        }) ;
-        if(!isFilled)
-            return "incomplete" ;
+        });
+        if (!isFilled)
+            return "incomplete";
 
         let tempList = this.list.map((tile) => {
             const { col, row, hint, myColor, myNum } = tile;
@@ -87,9 +87,9 @@ export class Board {
             return tile.fillColor === tempList[i].color;
         });
 
-        if(isCorrect)
-            return "correct" ;
-        return "wrong" ;
+        if (isCorrect)
+            return "correct";
+        return "wrong";
     }
 
     static paletteIsDifferent(nuPalette: number[], currentPalette: number[]) {
@@ -119,7 +119,7 @@ export class Board {
             if (tile.fillColor !== WHITE) {
                 const currentColor = currentPalette.findIndex(c => c === tile.fillColor);
                 tile.fillColor = colorList[currentColor];
-                if(tile.hint === SQ_ONLY || tile.hint === BOTH)
+                if (tile.hint === SQ_ONLY || tile.hint === BOTH)
                     tile.myColor = colorList[currentColor];
             }
 
@@ -186,7 +186,7 @@ export class Tile extends GameObjects.Rectangle {
         // if (hint === EMPTY || hint === NUM_ONLY) {
         this.setInteractive();
         this.on("pointerdown", () => {
-           
+            console.log(`Square at column ${this.col} and row ${this.row}`)
             if (this.hint === BOTH || this.hint === SQ_ONLY || Board.canRespond === false)
                 return;
             this.changeColor();

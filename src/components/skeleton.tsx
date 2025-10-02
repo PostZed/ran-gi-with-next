@@ -87,7 +87,7 @@ type SkeletonProps = {
     size?: number
 }
 
-const url = process.env.NEXT_PUBLIC_URL;
+const url = process.env.NEXT_PUBLIC_VERCEL_URL || process.env.NEXT_PUBLIC_URL;
 
 export default function Skeleton({ id, size }: SkeletonProps) {
 

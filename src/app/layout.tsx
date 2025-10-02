@@ -4,9 +4,9 @@ import MiniLayout from "./mini-layout"
 
 export const metadata: Metadata = {
   title: "Ran-gi",
-  description: "Ran-gi is a browser game.",
-  authors : [{name : "Ndunge Muga", url : "https://github.com/postzed"}],
-  keywords:["browser game", "puzzle game", "sudoku", "wordle"]
+  description: "Ran-gi is a puzzle game. ",
+  authors: [{ name: "Ndunge Muga", url: "https://github.com/postzed" }],
+  keywords: ["browser game", "puzzle game", "sudoku", "wordle"]
 };
 
 export default function RootLayout({

@@ -15,11 +15,11 @@ export default function Verifying() {
         setModalName("winLossAlert");
         //clearInterval(interval);
       }
-      else{
-        progress+=20 ;
-        setProgress(progress) ;
-        count+=1;
-        setCount(count) ;
+      else {
+        progress += 20;
+        setProgress(progress);
+        count += 1;
+        setCount(count);
       }
     }, 500);
 
@@ -29,9 +29,9 @@ export default function Verifying() {
   }, []);
 
   return <div className="bg-white border absolute w-[70%] top-2/5 left-[15%] border-gray-300 p-3">
-    <h1 className="text-lg">Checking your board...</h1>
+    <h1 className="text-lg" id="verifying">Checking your board...</h1>
     <div className={`h-1.25 bg-black rounded-full`} style={{
-      width:`${(count / 5)* 100}%`
+      width: `${(count / 5) * 100}%`
     }}>
 
     </div>

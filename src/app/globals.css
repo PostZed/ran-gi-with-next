@@ -193,6 +193,12 @@
   }
 }
 
+/* @media (width >=768px) {
+  body {
+    background-image: url("../../public/brick-wall.svg");
+  }
+}
+*/
 :root {
 
   --radius: 0.625rem;

@@ -4,7 +4,7 @@ import { Board } from "@/game/board";
 import { Verify } from "crypto";
 
 export function StartAgain() {
-    const { setVisible, setModalName , btnsDisabled} = useContext(GameContext);
+    const { setVisible, setModalName, btnsDisabled } = useContext(GameContext);
 
     function handleClick() {
         Board.startAgain();
@@ -42,7 +42,7 @@ export function CheckBoard() {
         setHasWon(isCorrect);
     }
 
-    return <button className="btn flex-1" onClick={handleClick} disabled={btnsDisabled}>
+    return <button className="btn flex-1" id="check-board" onClick={handleClick} disabled={btnsDisabled}>
         Is It Correct?
     </button>
 }

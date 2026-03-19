@@ -18,16 +18,13 @@ const optionsMap: OptionsType[] = [
 ]
 
 export default function MenuButtons() {
-    const { setVisible, setModalName, disableBtns, gameId } = useContext(GameContext);
-    const myName = "menu";
+    const { setVisible, setModalName, gameId, removeModal } = useContext(GameContext);
 
     return (<div className="max-w-7/10 h-fit bg-gray-200 absolute right-0 top-0 border">
         <div className="flex justify-between h-8 items-center">
             <h3 className="h-9/10 px-2">Menu</h3>
             <button className="appearance-none hover:border px-2" onClick={() => {
-                Board.canRespond = true;
-                setVisible(false);
-                disableBtns(false);
+                removeModal();
             }
             }>
                 <XMarkIcon className="w-7" />

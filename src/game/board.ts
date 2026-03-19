@@ -1,7 +1,6 @@
 "use client";
 
-import { BOTH, colors, EMPTY, NUM_ONLY, SQ_ONLY, WHITE } from "@/lib/constants";
-import { GameObjects, Scene } from "phaser";
+import { BOTH, colors, EMPTY, NUM_ONLY, SQ_ONLY, WHITE, CSS_COLORS, YELLOW, GREEN, RED, BLUE } from "@/lib/constants";
 import Solver from './solver'
 
 export type Info = {
@@ -15,21 +14,51 @@ export type Info = {
 
 export type FillState = "correct" | "wrong" | "incomplete"
 
+// Helper to convert hex color to CSS string
+function hexToCss(hex: number): string {
+    if (hex === WHITE) return CSS_COLORS.WHITE;
+    if (hex === 0xffff00) return CSS_COLORS.YELLOW;
+    if (hex === 0xff0000) return CSS_COLORS.RED;
+    if (hex === 65280) return CSS_COLORS.GREEN;
+    if (hex === 255) return CSS_COLORS.BLUE;
+    return '#' + hex.toString(16).padStart(6, '0');
+}
+
+// Convert palette (with WHITE) to CSS colors
+export function getCssPalette(palette: number[] | null): string[] {
+    if (!palette) return [];
+    return palette.map(hex => hexToCss(hex));
+}
+
+/** class Board contains static fields and methods that enable interaction the React UI.
+ * I'm not sure if this is the best design choice - but it works seamlessly across the two main
+ * implementations of the game, so it stays, for now.
+ */
 export class Board {
-    static info: any[];
-    static scene: Phaser.Scene;
+
+
+    /** Array containing the details of individual tiles as fetched from the server.
+     * type Info is a POJO, since it has no logic.
+     */
+    static info: Info[];
     static dims = 10;
+    /** list contains all the tiles used in a game. Tile and Info types are largely identical.
+     * However Tile contains more properties and methods. 
+    */
     static list: Tile[] = [];
-    static canvasWidth: number;
+
+    /** The list of colours that a tile can become as the user clicks it. 
+    */
     static palette: number[] | null = null;
+
     static canRespond = true;
-    static newGameCount = 0;
+    static onTileClick: ((tile: Tile) => void) | null = null;
+    static setTiles: ((tiles: Tile[]) => void) | null = null;
 
-
-    static changePayloadColors(payload: Info[]) {
-        let info = JSON.stringify(payload);
-        info = JSON.parse(info);
-        const savedPalette = this.palette.slice(0, 4);
+    static changePayloadColors(payload: Info[]): Info[] {
+        const stringified = JSON.stringify(payload);
+        const info: Info[] = JSON.parse(stringified);
+        const savedPalette = this.palette!.slice(0, 4);
         const isDifferent = this.paletteIsDifferent(colors, savedPalette);
 
         if (!isDifferent)
@@ -41,18 +70,10 @@ export class Board {
             item.color = savedPalette[colorIndex];
         }
         return info;
-
     }
 
-    // static isCorrect() {
-    //     const isCorrect = this.list.every(item => {
-    //         return item.fillColor === item.myColor;
-    //     });
-    //     return isCorrect;
-    // }
-
     static isCorrect(): FillState {
-        let grid: any = [];
+        const grid: (Info | null)[][] = [];
         for (let col = 0; col < this.dims; col++) {
             grid[col] = []
             for (let row = 0; row < this.dims; row++) {
@@ -66,7 +87,7 @@ export class Board {
         if (!isFilled)
             return "incomplete";
 
-        let tempList = this.list.map((tile) => {
+        const tempList = this.list.map((tile) => {
             const { col, row, hint, myColor, myNum } = tile;
             let color;
             if (hint === NUM_ONLY || hint === EMPTY) {
@@ -75,12 +96,12 @@ export class Board {
             else {
                 color = myColor
             }
-            const nuTile = { col, row, hint, color, count: myNum ? myNum : undefined }
+            const nuTile = { col, row, hint, color, count: myNum ?? 0, isClueSquare: hint === SQ_ONLY || hint === BOTH }
             grid[col][row] = nuTile;
             return nuTile;
         });
 
-        const solver = new Solver(this.dims, this.dims, this.palette.slice(0, 4));
+        const solver = new Solver(this.dims, this.dims, this.palette!.slice(0, 4));
         solver.solveAll(grid);
 
         const isCorrect = this.list.every((tile, i) => {
@@ -111,28 +132,34 @@ export class Board {
     }
 
     static changePalette(colorList: number[]) {
-        if (!this.paletteIsDifferent(colorList, this.palette))
+        if (!this.paletteIsDifferent(colorList, this.palette!))
             return;
-        const currentPalette = this.palette.slice(0, 4);
+        const currentPalette = this.palette!.slice(0, 4);
         for (let i = 0; i < this.list.length; i++) {
             const tile = this.list[i];
+
             if (tile.fillColor !== WHITE) {
                 const currentColor = currentPalette.findIndex(c => c === tile.fillColor);
                 tile.fillColor = colorList[currentColor];
+
                 if (tile.hint === SQ_ONLY || tile.hint === BOTH)
                     tile.myColor = colorList[currentColor];
             }
+            tile.setFillColor(tile.cssFillColor)
 
         }
-        //console.log(colorList)
+        Board.setTiles(this.list)
         this.palette = [...colorList, WHITE];
     }
 
     static startAgain() {
         this.list.forEach((tile) => {
-            if (tile.hint === EMPTY || tile.hint === NUM_ONLY)
+            if (tile.hint === EMPTY || tile.hint === NUM_ONLY) {
                 tile.fillColor = WHITE;
+                tile.setFillColor(tile.cssFillColor)
+            }
         });
+        Board.setTiles(this.list)
         Board.canRespond = true;
     }
 
@@ -140,114 +167,86 @@ export class Board {
         this.canRespond = true;
         const dims = this.dims;
         const info = this.changePayloadColors(this.info);
-        const width = this.canvasWidth / dims;
         this.destroyBoard();
-        Tile.size = width;
+
+        const tiles: Tile[] = [];
         info.forEach((item) => {
-            let { isClueSquare, col, row, hint, color, count } = item
+            const { isClueSquare, col, row, hint, color, count } = item;
             const tile = new Tile(col, row, color, hint, count);
-            this.list.push(tile);
+            tiles.push(tile);
         });
 
+        this.list = tiles;
 
+        // Notify React to render the tiles
+        if (this.setTiles) {
+            this.setTiles([...tiles]);
+        }
     }
 
     static destroyBoard() {
-
-        this.list?.forEach(tile => tile.destroySelf());
         this.list = [];
+        if (this.setTiles) {
+            this.setTiles([]);
+        }
     }
 
+    static handleTileClick(tile: Tile) {
+        if (tile.hint === BOTH || tile.hint === SQ_ONLY || Board.canRespond === false)
+            return;
+        tile.changeColor();
+    }
 }
 
-
-export class Tile extends GameObjects.Rectangle {
-    static scene: Scene;
-    static size: number
-
+export class Tile {
     col: number
     row: number
-    dot: GameObjects.Arc
-    numHint: GameObjects.DOMElement;
-    myNum: number;
+    myNum?: number;
     myColor: number
+    fillColor: number
     palettePos = 0;
     hint: number
+    setFillColor: (s: string) => void | null
+
     constructor(col: number, row: number, color: number, hint: number, num: number) {
-        const size = Tile.size;
-        super(Tile.scene, col * size, row * size, size, size, color);
-        this.setOrigin(0);
-        this.myColor = color;
-        Tile.scene.add.existing(this);
         this.col = col;
         this.row = row;
+        this.myColor = color;
         this.hint = hint;
-        this.setStrokeStyle(1, 0x808080)
-        // if (hint === EMPTY || hint === NUM_ONLY) {
-        this.setInteractive();
-        this.on("pointerdown", () => {
-            console.log(`Square at column ${this.col} and row ${this.row}`)
-            if (this.hint === BOTH || this.hint === SQ_ONLY || Board.canRespond === false)
-                return;
-            this.changeColor();
-        })
-        //  }
+        this.fillColor = (hint === SQ_ONLY || hint === BOTH) ? color : WHITE;
         if (hint === NUM_ONLY || hint === BOTH)
             this.myNum = num;
-        this.setHints(hint);
     }
 
-    setHints(hint: number) {
-        let offsetX = this.x + this.width - (0.1 * this.width);
-        let offsetY = this.y + this.width - (0.1 * this.width)
-        this.fillColor = WHITE;
-        if (hint === EMPTY)
-            return;
-
-
-        if (hint === SQ_ONLY || hint === BOTH) {
-            this.dot = Tile.scene.add.circle(offsetX, offsetY, 0.05 * this.width, 0x000000);
-            this.fillColor = this.myColor;
-        }
-
-
-        if (hint === BOTH || hint === NUM_ONLY) {
-            // this.numHint = Tile.scene.add.text(this.x + Tile.size / 2, this.y + Tile.size / 2, "", {
-            //     color: "#000000", fontSize: `${0.7 * Tile.size}px`
-            // }).setOrigin(0.5);
-            const fontSize = this.myNum < 10 ? 0.7 * Tile.size : 0.35 * Tile.size
-            const estilo = `color:transparent;
-            background-clip:text;
-            background-color:black;
-            font-size: ${fontSize}px;
-            font-family:Georgia`
-            this.numHint = Tile.scene.add.dom(this.x + Tile.size / 2, this.y + Tile.size / 2, "div", estilo, "" + this.myNum)
-            this.numHint.node.setAttribute("inert", "true");
-        }
+    get isClueSquare(): boolean {
+        return this.hint === SQ_ONLY || this.hint === BOTH;
     }
 
+    get showDot(): boolean {
+        return this.hint === SQ_ONLY || this.hint === BOTH;
+    }
 
+    get showNumber(): boolean {
+        return this.hint === BOTH || this.hint === NUM_ONLY;
+    }
+
+    get cssFillColor(): string {
+        return hexToCss(this.fillColor);
+    }
+
+    get cssMyColor(): string {
+        return hexToCss(this.myColor);
+    }
+
+    /**
+     * Changes the color of a cell. Note that palettePos indicates the NEXT colour
+     * in the palette, not the current one - so we set `fillColor` to the colour in this.palettePos,
+     * then we increase this.palettePos to move it to the next index.
+     */
     changeColor() {
-        if (this.palettePos >= 0 && this.palettePos <= 3) {
-
-            this.fillColor = Board.palette![this.palettePos]
-            this.setFillStyle(Board.palette![this.palettePos], 1)
-            this.palettePos++;
-        }
-        else {
-            this.fillColor = Board.palette![4];
-            this.setFillStyle(Board.palette![this.palettePos], 1)
-            this.palettePos = 0;
-        }
-
-    }
-
-    destroySelf() {
-        this.dot?.destroy(true)
-        this.numHint?.destroy(true);
-        this.destroy(true);
+        if (!Board.palette) return;
+        this.fillColor = Board.palette![this.palettePos]
+        this.myColor = this.fillColor
+        this.palettePos = (this.palettePos + 1) % 5
     }
 }
-
-
-

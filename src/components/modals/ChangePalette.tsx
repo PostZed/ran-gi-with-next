@@ -8,7 +8,7 @@ const colorNames = ['yellow', 'green', 'red', 'blue', 'pink', 'purple', 'teal', 
     , 'maroon', 'blue-violet', 'brown', 'light green', 'chocolate', 'light blue',
     'dark orange', 'gold'];
 
-const colorNumbers = ['#ffff00', '#ff00', '#ff0000', '#ff', '#ff00ff', '#800080', '#8080', '#808080',
+const colorNumbers = ['#ffff00', '#00ff00', '#ff0000', '#0000ff', '#ff00ff', '#800080', '#008080', '#808080',
     '#800000', '#8a2be2', '#a52a2a', '#7fff00', '#d2692e', '#6495ed', '#ff8c00', '#ffd700'];
 
 
@@ -47,7 +47,7 @@ export default function Palette(
     //     setModalName
     // }: GameContextType
 ) {
-    const { setVisible, setColors, colors, disableBtns } = useContext(GameContext);
+    const { setColors, colors, removeModal } = useContext(GameContext);
 
     const [selectedColors, setSelectedColors] = useState(() => findSelected(colors));
     const [selectedCount, setSelectedCount] = useState(4)
@@ -56,9 +56,7 @@ export default function Palette(
         <div className="flex justify-between border border-gray-300">
             <h2 className="">Choose a different palette</h2>
             <button className="appearance-none hover:border-1 mx-1" onClick={() => {
-                Board.canRespond =true;
-                setVisible(false);
-                disableBtns(false) ;
+                removeModal();
             }
             }>
                 <XMarkIcon className="w-7" />
@@ -91,9 +89,7 @@ export default function Palette(
                 localStorage.setItem('colors', json);
                 Board.changePalette(nuColors);
                 setColors(nuColors)
-                Board.canRespond = true;
-                setVisible(false);
-                disableBtns(false)
+                removeModal();
             }}>
             Save
         </button>

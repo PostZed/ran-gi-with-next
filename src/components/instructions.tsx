@@ -3,7 +3,6 @@
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useContext, useState } from "react";
 import { GameContext } from "./skeleton";
-import { Board } from "@/game/board";
 
 
 export default function HowToPlay() {
@@ -278,12 +277,10 @@ function ScrollButton({ styling, type, setPos, setDir }: ScrollBtnProps) {
 }
 
 function TopStrip() {
-    const { setVisible, disableBtns, } = useContext(GameContext);
+    const { removeModal } = useContext(GameContext);
 
     function handleClick() {
-        setVisible(false);
-        Board.canRespond = true;
-        disableBtns(false)
+        removeModal();
     }
 
     return (

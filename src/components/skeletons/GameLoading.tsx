@@ -25,14 +25,17 @@ const map2 = new Map<number, string>([
 export function GridSkeleton({ size }: { size: number }) {
     const mySkeleton = list[size - 7].info;
 
-    return <div className={`grid grid-cols-${size}  grid-rows-${size} w-full h-full`}>{
-        mySkeleton.map((item, i) => {
-            const { col, row } = item
-            let color = map2.get(item.color);
-            return <div key={i} className={`animate-glimmer`}
-                style={{ backgroundColor: color, gridRowStart: row + 1, gridColumnStart: col + 1 }}></div>
-        })
-    }
+    return <div className="grid w-full h-full" style={{
+        gridTemplateColumns: `repeat(${size}, 1fr)`,
+        gridTemplateRows: `repeat(${size}, 1fr)`
+    }}>{
+            mySkeleton.map((item, i) => {
+                const { col, row } = item
+                let color = map2.get(item.color);
+                return <div key={i} className={`animate-glimmer`}
+                    style={{ backgroundColor: color, gridRowStart: row + 1, gridColumnStart: col + 1 }}></div>
+            })
+        }
         <h1 className="text-2xl absolute top-[48%] p-4">Loading...</h1>
     </div>
 }

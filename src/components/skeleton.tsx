@@ -11,7 +11,7 @@ import { ConfirmNewGame } from "./alerts/confirm";
 import ButtonBar from "./bottom-buttons/bottom-buttons";
 import Verifying from "./alerts/verify";
 import GameLink from "./modals/Link";
-import { FillState } from "@/game/board";
+import { FillState, Board } from "@/game/board";
 import { Instructions } from "./new-instructions";
 import { ApolloProvider } from "@apollo/client/react";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
@@ -20,6 +20,7 @@ export type GameContextType = {
     dimensions: number;
     colors: number[];
     setColors: (n: number[]) => void
+    removeModal: () => void;
     setVisible: (b: boolean) => void;
     setModalName: (name: string) => void;
     setDimensions: (n: number) => void;
@@ -48,6 +49,7 @@ export const GameContext = createContext<GameContextType>({
     dimensions: 10,
     colors: defaultColors,
     setColors: (n: number[]) => { },
+    removeModal: () => { },
     setVisible: (b: boolean) => { },
     setModalName: (name: string) => { },
     setDimensions: (n: number) => { },
@@ -123,7 +125,13 @@ export default function Skeleton({ id, size }: SkeletonProps) {
     /* @ts-expect-error */
     const Modal = isModalShowing && modalName in modalMap ? modalMap[modalName] : Empty;
     //const Modal = modalMap["palette"] ;
+    const removeModal = () => {
+        setIsModalShowing(false);
+        disableBtns(false);
+        Board.canRespond = true;
+    };
     const obj = {
+        removeModal,
         colors,
         dimensions,
         setVisible: setIsModalShowing,

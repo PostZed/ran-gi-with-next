@@ -1,12 +1,11 @@
 import { useContext, useEffect, useState } from "react"
 import { GameContext } from "../skeleton";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Board } from "@/game/board";
 
 type ClickedState = "success" | "unclicked" | "fail";
 
 export default function GameLink() {
-    const { setVisible, setModalName, setLink, link, disableBtns } = useContext(GameContext);
+    const { link, removeModal } = useContext(GameContext);
     const [clickState, setClickState] = useState<ClickedState>("unclicked");
     let text;
     switch (clickState) {
@@ -48,9 +47,7 @@ export default function GameLink() {
 
     return <div key={link} className="overflow-x-hidden absolute top-[30%] left-[10%] w-[80%] ">
         <button className="w-7 border rounded-full bg-gray-100 hover:scale-105" onClick={e => {
-            setVisible(false);
-            Board.canRespond = true;
-            disableBtns(false);
+            removeModal();
         }}>
             <XMarkIcon className="w-7 h-7" />
         </button>
